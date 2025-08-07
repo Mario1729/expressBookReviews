@@ -5,6 +5,9 @@ const session = require('express-session');
 const customer_routes = require('./router/auth_users.js').authenticated;
 const genl_routes = require('./router/general.js').general;
 
+// For Axios Demo
+const books_routes = require('./router/refbooksdb.js').booksroute;
+
 const app = express();
 app.use(express.json());
 
@@ -45,6 +48,9 @@ app.get("/customer/auth", (req, res) => {
 // Actual route handlers
 app.use("/customer", customer_routes);
 app.use("/", genl_routes);
+
+// Axios Demo
+app.use("/books", books_routes);
 
 // Catch-all route for unknown paths
 app.use((req, res) => {
