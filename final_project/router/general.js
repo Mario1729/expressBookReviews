@@ -2,13 +2,6 @@ const express = require('express');
 const axios = require('axios');
 const public_users = express.Router();
 
-// POST /register - placeholder
-const { registerUser } = require('./auth_users.js');
-public_users.post('/register', registerUser);
-
-// Sync mode version
-// const books = require('./booksdb.js');
-
 // The following code is to demo 'Axios-Async' mode
 const BOOK_SERVICE_PORT = process.env.BOOK_SERVICE_PORT || 5000;
 const BOOK_SERVICE_HOST = process.env.BOOK_SERVICE_HOST || 'localhost';
@@ -138,7 +131,15 @@ public_users.get('/review', (req, res) => {
     res.status(400).json({ message: "Please specify a valid isbn (e.g. /review/:isbn)" });
 });
 
+// POST /register - placeholder
+const { registerUser } = require('./auth_users.js');
+public_users.post('/register', registerUser);
+
 // Original code in 'Sync' mode
+
+// Sync mode version
+// const books = require('./booksdb.js');
+
 /*
 // GET / - Get all books
 public_users.get('/', (req, res) => {
