@@ -1,24 +1,28 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const session = require('express-session')
+const session = require('express-session');
+
 const customer_routes = require('./router/auth_users.js').authenticated;
 const genl_routes = require('./router/general.js').general;
 
 const app = express();
 app.use(express.json());
 
-app.use("/customer",session({secret:"fingerprint_customer",resave: true, saveUninitialized: true}))
+// Session middleware
+app.use("/customer", session({
+    secret: "fingerprint_customer",
+    resave: true,
+    saveUninitialized: true
+}));
 
-app.use("/customer/auth/*", function auth(req,res,next){
-    // Check if user is logged in and has valid access token
+// Auth middleware for protected customer routes
+app.use("/customer/auth/*", function auth(req, res, next) {
     if (req.session.authorization) {
         let token = req.session.authorization['accessToken'];
-
-        // Verify JWT token
         jwt.verify(token, "access", (err, user) => {
             if (!err) {
                 req.user = user;
-                next(); // Proceed to the next middleware
+                next();
             } else {
                 return res.status(403).json({ message: "User not authenticated" });
             }
@@ -27,10 +31,25 @@ app.use("/customer/auth/*", function auth(req,res,next){
         return res.status(403).json({ message: "User not logged in" });
     }
 });
- 
-const PORT =5000;
 
+// Route not found handler for /customer
+app.get("/customer", (req, res) => {
+    res.status(400).json({ message: "Please specify a valid customer route (e.g. /customer/auth/...)" });
+});
+
+// Route not found handler for /customer/auth
+app.get("/customer/auth", (req, res) => {
+    res.status(400).json({ message: "Please specify a valid authenticated route (e.g. /customer/auth/profile)" });
+});
+
+// Actual route handlers
 app.use("/customer", customer_routes);
 app.use("/", genl_routes);
 
-app.listen(PORT,()=>console.log("Server is running"));
+// Catch-all route for unknown paths
+app.use((req, res) => {
+    res.status(404).json({ message: "Route not found" });
+});
+
+const PORT = 5000;
+app.listen(PORT, () => console.log("Server is running"));
