@@ -1,13 +1,11 @@
 const express = require('express');
 const books = require('./booksdb.js');
-const { isValid, users } = require('./auth_users.js');
+const { registerUser } = require('./auth_users.js');
 
 const public_users = express.Router();
 
 // POST /register - placeholder
-public_users.post('/register', (req, res) => {
-    return res.status(501).json({ message: "general Registration not implemented yet." });
-});
+public_users.post('/register', registerUser);
 
 // GET / - Get all books
 public_users.get('/', (req, res) => {
@@ -30,7 +28,6 @@ public_users.get('/isbn/:isbn', (req, res) => {
 public_users.get('/isbn', (req, res) => {
     res.status(400).json({ message: "Please specify a valid isbn (e.g. /isbn/:isbn)" });
 });
-
 
 // GET /author/:author - Get books by author
 public_users.get('/author/:author', (req, res) => {
